@@ -11,14 +11,33 @@ class MoviesController < ApplicationController
   end
 
   def index
+    @all_ratings = Movie.getRatings()
+    @ratingChecked = Hash.new
+    if params["ratings"]
+      @movies = Movie.where(rating: params["ratings"].keys)
+      
+      params["ratings"].keys.each do |rating|
+        @ratingChecked[rating] = true
+      end
+    else
+      @movies = Movie.all
+      @all_ratings.each do |rating|
+        @ratingChecked[rating] = true
+      end
+    end
+    
     if params[:sortBy] == "title"
-      @movies = Movie.all.order(:title)
+      @movies = @movies.order(:title)
       @titleHighlight = "hilite"
     elsif params[:sortBy] == "date"
-      @movies = Movie.all.order(:release_date)
+      @movies = @movies.order(:release_date)
       @dateHighlight = "hilite"
       
     end
+    
+    
+    
+    
   end
 
   def new
