@@ -11,14 +11,21 @@ class MoviesController < ApplicationController
   end
 
   def index
+    
+    
     @all_ratings = Movie.getRatings()
     @ratingChecked = Hash.new
-    if params["ratings"]
-      @movies = Movie.where(rating: params["ratings"].keys)
+    if params["ratings"] or session["ratings"]
+      if (params["ratings"]) 
+        session["ratings"] = params["ratings"]
+      end
       
-      params["ratings"].keys.each do |rating|
+      @movies = Movie.where(rating: session["ratings"].keys)
+      
+      session["ratings"].keys.each do |rating|
         @ratingChecked[rating] = true
       end
+      
     else
       @movies = Movie.all
       @all_ratings.each do |rating|
@@ -26,17 +33,15 @@ class MoviesController < ApplicationController
       end
     end
     
-    if params[:sortBy] == "title"
+    if params[:sortBy] == "title" or session[:sortBy] == "title"
       @movies = @movies.order(:title)
       @titleHighlight = "hilite"
-    elsif params[:sortBy] == "date"
+      session[:sortBy] = "title"
+    elsif params[:sortBy] == "date" or session[:sortBy] == "date"
       @movies = @movies.order(:release_date)
       @dateHighlight = "hilite"
-      
+      session[:sortBy] = "date"
     end
-    
-    
-    
     
   end
 
