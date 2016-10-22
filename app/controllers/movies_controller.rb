@@ -16,7 +16,7 @@ class MoviesController < ApplicationController
     
     # Redirect if new params (sort or filters)
     #(change session to new params)
-    if (params[:ratings] or params[:sortBy])
+    if ((params[:ratings] and (params[:ratings] != session[:ratings])) or (params[:sortBy] and (params[:sortBy] != session[:sortBy])))
       if (params[:ratings]) 
         session[:ratings] = params[:ratings]
       end
@@ -24,9 +24,9 @@ class MoviesController < ApplicationController
       if (params[:sortBy])
         session[:sortBy] = params[:sortBy]
       end
-          
+      
       flash.keep
-      redirect_to movies_path
+      redirect_to movies_path(ratings: params[:ratings], sortBy: params[:sortBy])
     end
     
     # Filter based on ratings
